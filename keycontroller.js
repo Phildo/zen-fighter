@@ -1,18 +1,25 @@
 var KeyController = function(player)
 {
-  var x = 0;
+  var left  = false;
+  var right = false;
+  var jump  = false;
+  var shield = false;
+
   function downKey(e)
   {
-    alert(e.keyCode);
     switch(e.keyCode)
     {
-      case 37: //a
-        x = -0.3;
+      case 37: //<-
+        left = true;
         break;
-      case 39: //d
-        x = 0.3;
+      case 39: //->
+        right = true;
         break;
       case 32: //space
+        jump = true;
+        break;
+      case 16: //shift
+        shield = true;
         break;
     }
   };
@@ -21,20 +28,24 @@ var KeyController = function(player)
   {
     switch(e.keyCode)
     {
-      case 37: //a
-        x = 0.0;
+      case 37: //<-
+        left = false;
         break;
-      case 39: //d
-        x = 0.0;
-        break;
-      case 32: //space
+      case 39: //->
+        right = false;
         break;
     }
   };
 
   this.tick = function()
   {
-    player.move(x);
+    var x = 0;
+    if(left) x -= 1;
+    if(right) x += 1;
+    player.move(x, jump, shield);
+
+    jump = false;
+    shield = false;
   };
 
   document.addEventListener('keydown', downKey, false);

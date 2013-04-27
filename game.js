@@ -20,6 +20,8 @@ var Game = function()
   this.nextScene = function()
   {
     scenes[currentScene].cleanup();
+    stage.drawCanv.context.fillStyle = "#000000";
+    stage.drawCanv.context.fillRect(0,0,stage.drawCanv.canvas.width,stage.drawCanv.canvas.height);
     currentScene++;
     scenes[currentScene].ready();
   };
