@@ -44,13 +44,16 @@ var GamePlayScene = function(game, canv)
     canv.context.stroke();
 
     //cascade
-    canv.context.fillStyle = "rgba(0,0,0,0.05)";
-    if(cascade[cascadeIndex].y == 0)
-      cascade[cascadeIndex].x = Math.floor(Math.random()*16);
-    canv.context.fillRect(cascade[cascadeIndex].x*40,cascade[cascadeIndex].y*40,40,40);
-    cascade[cascadeIndex].y = (cascade[cascadeIndex].y+1)%8
-    cascadeIndex = (cascadeIndex+1)%40;
-
+    for(var i = 0; i < 2; i++)
+    {
+      canv.context.fillStyle = "rgba(0,0,0,0.05)";
+      if(cascade[cascadeIndex*(i+1)].y == 0)
+        cascade[cascadeIndex*(i+1)].x = Math.floor(Math.random()*16);
+      canv.context.fillRect(cascade[cascadeIndex*(i+1)].x*40,cascade[cascadeIndex*(i+1)].y*40,40,40);
+      cascade[cascadeIndex*(i+1)].y = (cascade[cascadeIndex*(i+1)].y+1)%8
+      cascadeIndex = (cascadeIndex+1)%20;
+    }
+  
     kcontroller.tick();
     aicontroller.tick();
 
