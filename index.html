@@ -1,0 +1,42 @@
+<html>
+<head>
+<style type='text/css'>
+  @font-face
+  {
+      font-family:vg_font;
+      src:url('assets/emulogic.ttf');
+  }
+  body
+  {
+    font-family:vg_font;
+    -webkit-user-select: none;
+  }
+</style>
+<script type='text/javascript' src='game.js'></script>
+<script type='text/javascript' src='player.js'></script>
+<script type='text/javascript' src='keycontroller.js'></script>
+<script type='text/javascript' src='aicontroller.js'></script>
+<script type='text/javascript' src='stage.js'></script>
+<script type='text/javascript' src='scenes/nullscene.js'></script>
+<script type='text/javascript' src='scenes/loadingscene.js'></script>
+<script type='text/javascript' src='scenes/gameplayscene.js'></script>
+<script type='text/javascript' src='utils/canv.js'></script>
+<script type='text/javascript' src='utils/webgl-utils.js'></script>
+<script type='text/javascript'>
+
+function doit()
+{
+  var g = new Game();
+  g.begin();
+};
+
+window.addEventListener('load',doit,false);
+</script>
+</head>
+<body style="height:100%; overflow:hidden;" oncontextmenu="return false"> <!-- Stops scrolling -->
+<div id='stage_container' style="display:block; margin:50px auto 20px auto; height:320px; width:640px;"><img id="shadow" src="assets/shadow.png"></img></div>
+<div id='instructions' style="display:block; margin:0px auto; text-align:center; color:#555555; font-size:10px;">
+move = arrows <span style="color:#000000;">|</span> act = space
+</div>
+</body>
+</html>
