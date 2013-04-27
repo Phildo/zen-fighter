@@ -71,5 +71,16 @@ var Player = function(canv)
       shieldv = 40;
 
     if(shieldv > 0) shieldv--;
+
+    if(this.x > canv.canvas.width-5)
+    {
+      this.x = canv.canvas.width-5;
+      if(this.xvel > 0) this.xvel *= -1;
+    }
+    else if(this.x < 5)
+    {
+      this.x = 5;
+      if(this.xvel < 0) this.xvel *= -1;
+    }
   };
 };

@@ -7,17 +7,17 @@ var GamePlayScene = function(game, canv)
   var kcontroller;
   var aicontroller;
   var cascade;
-  var cascadeTimer = 0;
+  var cascadeIndex = 0;
 
   var getRandomCascade = function()
   {
-    return {"x":Math.floor(Math.random()*16),"y":Math.floor(Math.random()*8),"started":false};
+    return {"x":Math.floor(Math.random()*16),"y":Math.floor(Math.random()*8)};
   }
 
   this.ready = function()
   {
     offsetx = 0;
-    offsety = 130;
+    offsety = 120;
     p1 = new Player(canv);
     p1.x = 40;
     p2 = new Player(canv);
@@ -28,7 +28,7 @@ var GamePlayScene = function(game, canv)
     aicontroller = new AIController(p2);
 
     cascade = []
-    for(var i = 0; i < 20; i++)
+    for(var i = 0; i < 40; i++)
       cascade[i] = getRandomCascade();
   };
 
@@ -44,22 +44,12 @@ var GamePlayScene = function(game, canv)
     canv.context.stroke();
 
     //cascade
-    if(cascadeTimer == 0)
-    {
-      canv.context.fillStyle = "rgba(0,0,0,0.25)";
-      for(var i = 0; i < cascade.length; i++)
-      {
-        if(cascade[i].y == 0)
-        {
-          cascade[i].started = true;
-          cascade[i].x = Math.floor(Math.random()*16);
-        }
-        if(cascade[i].started)
-          canv.context.fillRect(cascade[i].x*40,cascade[i].y*40,40,40);
-        cascade[i].y = (cascade[i].y+1)%8
-      }
-    }
-    cascadeTimer = (cascadeTimer-1)%5;
+    canv.context.fillStyle = "rgba(0,0,0,0.05)";
+    if(cascade[cascadeIndex].y == 0)
+      cascade[cascadeIndex].x = Math.floor(Math.random()*16);
+    canv.context.fillRect(cascade[cascadeIndex].x*40,cascade[cascadeIndex].y*40,40,40);
+    cascade[cascadeIndex].y = (cascade[cascadeIndex].y+1)%8
+    cascadeIndex = (cascadeIndex+1)%40;
 
     kcontroller.tick();
     aicontroller.tick();
