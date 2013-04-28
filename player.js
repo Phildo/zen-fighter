@@ -1,4 +1,4 @@
-var Player = function(canv)
+var Player = function(canv, solid)
 {
   this.x = 0;
   this.y = 0;
@@ -20,8 +20,16 @@ var Player = function(canv)
   this.draw = function(offsetx, offsety)
   {
     if(this.y < 0) this.y = 0;
-    canv.context.fillStyle = "#000000";
-    canv.context.fillRect(offsetx+this.x-5,canv.canvas.height-(offsety+this.y+10),10,10);
+    if(solid)
+    {
+      canv.context.fillStyle = "#000000";
+      canv.context.fillRect(offsetx+this.x-5,canv.canvas.height-(offsety+this.y+10),10,10);
+    }
+    else
+    {
+      canv.context.strokeStyle = "#000000";
+      canv.context.strokeRect(offsetx+this.x-5,canv.canvas.height-(offsety+this.y+10),10,10);
+    }
   };
 
   this.move = function(x, jump, dodge)
