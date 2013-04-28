@@ -121,6 +121,9 @@ var GamePlayScene = function(game, canv)
       if(p1.y > p2.y) { p1.y = yint+5; p2.y = yint-5; }
       else            { p1.y = yint-5; p2.y = yint+5; }
 
+      p1.score += Math.round(Math.abs(p1.xvel)+Math.abs(p1.yvel));
+      p2.score += Math.round(Math.abs(p2.xvel)+Math.abs(p2.yvel));
+
       var txvel = p1.xvel;
       var tyvel = p1.yvel;
       p1.xvel = p2.xvel;

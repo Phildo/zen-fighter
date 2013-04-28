@@ -5,9 +5,18 @@ var Player = function(canv, solid)
   this.xvel = 0;
   this.yvel = 0;
   this.sprint = true;
+  this.score = 0;
   var dx;
   var dy;
   var dl;
+  var jumps = [];
+  var jumpsi = 0;
+  for(var i = 0; i < 10; i++)
+    jumps[i] = new Audio('assets/jump.mp3');
+  var attack = [];
+  var attacki = 0;
+  for(var i = 0; i < 10; i++)
+    attack[i] = new Audio('assets/attack.mp3');
 
   this.opponent; //Must be set after initialization
 
@@ -20,15 +29,21 @@ var Player = function(canv, solid)
   this.draw = function(offsetx, offsety)
   {
     if(this.y < 0) this.y = 0;
+    canv.context.fillStyle = "#000000";
+    canv.context.strokeStyle = "#000000";
     if(solid)
     {
-      canv.context.fillStyle = "#000000";
       canv.context.fillRect(offsetx+this.x-5,canv.canvas.height-(offsety+this.y+10),10,10);
+      canv.context.fillRect(canv.canvas.width-15,canv.canvas.height-15,10,10);
+      canv.context.textAlign = "right";
+      canv.context.fillText(this.score,canv.canvas.width-25,canv.canvas.height-5);
     }
     else
     {
-      canv.context.strokeStyle = "#000000";
       canv.context.strokeRect(offsetx+this.x-5,canv.canvas.height-(offsety+this.y+10),10,10);
+      canv.context.strokeRect(5,canv.canvas.height-15,10,10);
+      canv.context.textAlign = "left";
+      canv.context.fillText(this.score,25,canv.canvas.height-5);
     }
   };
 
@@ -58,9 +73,16 @@ var Player = function(canv, solid)
 
     if(jump)
     {
-      if(this.y == 0) this.yvel = 10;
+      if(this.y == 0)
+      {
+        jumps[jumpsi].play();
+        jumpsi = (jumpsi+1)%10;
+        this.yvel = 10;
+      }
       else if(this.sprint)
       {
+        attack[attacki].play();
+        attacki = (attacki+1)%10;
         this.sprint = false;
         dx = this.opponent.x-this.x;
         dy = this.opponent.y-this.y;
@@ -74,6 +96,8 @@ var Player = function(canv, solid)
     }
     if(this.sprint && dodge)
     {
+      attack[attacki].play();
+      attacki = (attacki+1)%10;
       this.sprint = false;
       if(this.y > 0)
       {
