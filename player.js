@@ -4,7 +4,7 @@ var Player = function(canv, solid)
   this.y = 0;
   this.xvel = 0;
   this.yvel = 0;
-  var sprint = true;
+  this.sprint = true;
   var dx;
   var dy;
   var dl;
@@ -49,7 +49,7 @@ var Player = function(canv, solid)
 
     if(this.y == 0)
     {
-      sprint = true;
+      this.sprint = true;
       if(this.yvel < -3)
         this.yvel *= -1/4;
       else
@@ -59,19 +59,22 @@ var Player = function(canv, solid)
     if(jump)
     {
       if(this.y == 0) this.yvel = 10;
-      else if(sprint)
+      else if(this.sprint)
       {
-        sprint = false;
+        this.sprint = false;
         dx = this.opponent.x-this.x;
         dy = this.opponent.y-this.y;
         dl = Math.sqrt((dx*dx)+(dy*dy));
-        this.xvel = dx/dl*40;
-        this.yvel = dy/dl*40;
+          this.xvel = dx/dl*40;
+        if(this.opponent.y > this.y)
+          this.yvel = dy/dl*10;
+        else
+          this.yvel = dy/dl*40;
       }
     }
-    if(sprint && dodge)
+    if(this.sprint && dodge)
     {
-      sprint = false;
+      this.sprint = false;
       if(this.y > 0)
       {
         dx = this.opponent.x-this.x;

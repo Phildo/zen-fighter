@@ -8,6 +8,8 @@ var GamePlayScene = function(game, canv)
   var aicontroller;
   var cascade;
   var cascadeIndex = 0;
+  var hit;
+  var hiti;
 
   var getRandomCascade = function()
   {
@@ -16,6 +18,10 @@ var GamePlayScene = function(game, canv)
 
   this.ready = function()
   {
+    hit = [];
+    for(var i = 0; i < 10; i++)
+      hit[i] = new Audio('assets/hit.mp3');
+    hiti = 0;
     offsetx = 0;
     offsety = 120;
     p1 = new Player(canv, false);
@@ -32,10 +38,8 @@ var GamePlayScene = function(game, canv)
       cascade[i] = getRandomCascade();
   };
 
-var frame = 0;
   this.tick = function()
   {
-    frame++;
     canv.context.fillStyle = "#000000";
 
     //ground
@@ -61,70 +65,75 @@ var frame = 0;
     kcontroller.tick();
     aicontroller.tick();
 
-    p1.tick();
-    p2.tick();
-
+    //Detect collisions
     var osx;
     var obx;
-    if(p1.xvel > 0)      { osx = p1.x-p1.xvel; obx = p1.x;         }
-    else if(p1.xvel < 0) { osx = p1.x;         obx = p1.x-p1.xvel; }
-    else                 { osx = p1.x;         obx = p1.x;         }
+    if     (p1.xvel > 0) { osx = p1.x        -5; obx = p1.x+p1.xvel+5; }
+    else if(p1.xvel < 0) { osx = p1.x+p1.xvel-5; obx = p1.x        +5; }
+    else                 { osx = p1.x        -5; obx = p1.x        +5; }
     var osy;
     var oby;
-    if(p1.yvel > 0)      { osy = p1.y-p1.yvel; oby = p1.y;         }
-    else if(p1.yvel < 0) { osy = p1.y;         oby = p1.y-p1.yvel; }
-    else                 { osy = p1.y;         oby = p1.y;         }
+    if     (p1.yvel > 0) { osy = p1.y        -5; oby = p1.y+p1.yvel+5  }
+    else if(p1.yvel < 0) { osy = p1.y+p1.yvel-5; oby = p1.y        +5; }
+    else                 { osy = p1.y        -5; oby = p1.y        +5; }
 
     var tsx;
     var tbx;
-    if(p2.xvel > 0)      { tsx = p2.x-p2.xvel; tbx = p2.x;         }
-    else if(p2.xvel < 0) { tsx = p2.x;         tbx = p2.x-p2.xvel; }
-    else                 { tsx = p2.x;         tbx = p2.x;         }
+    if     (p2.xvel > 0) { tsx = p2.x        -5; tbx = p2.x+p2.xvel+5; }
+    else if(p2.xvel < 0) { tsx = p2.x+p2.xvel-5; tbx = p2.x        +5; }
+    else                 { tsx = p2.x        -5; tbx = p2.x        +5; }
     var tsy;
     var tby;
-    if(p2.yvel > 0)      { tsy = p2.y-p2.yvel; tby = p2.y;         }
-    else if(p2.yvel < 0) { tsy = p2.y;         tby = p2.y-p2.yvel; }
-    else                 { tsy = p2.y;         tby = p2.y;         }
+    if     (p2.yvel > 0) { tsy = p2.y        -5; tby = p2.y+p2.yvel+5; }
+    else if(p2.yvel < 0) { tsy = p2.y+p2.yvel-5; tby = p2.y        +5; }
+    else                 { tsy = p2.y        -5; tby = p2.y        +5; }
 
-    var oyint = (p1.y-p1.yvel)+(((p1.x-p1.xvel)/p1.xvel)*p1.yvel);
+    var oyint = p1.y-((p1.x/p1.xvel)*p1.yvel);
+    var tyint = p2.y-((p2.x/p2.xvel)*p2.yvel);
     var oslope = p1.yvel/p1.xvel;
-    var tyint = (p2.y-p2.yvel)+(((p2.x-p2.xvel)/p2.xvel)*p2.yvel);
     var tslope = p2.yvel/p2.xvel;
 
     var xint = (oyint-tyint)/(tslope-oslope);
-    var yint = oslope*xint+oyint;
-    if(p1.xvel == 0) xint = p1.x;
-    if(p2.xvel == 0) xint = p2.x;
-    if(p1.yvel == 0) yint = p1.y;
-    if(p2.yvel == 0) yint = p2.y;
-
-
+    var yint = (oslope*xint)+oyint;
+    if(p1.xvel == 0) { xint = p1.x; yint = tslope*xint + tyint; }
+    if(p2.xvel == 0) { xint = p2.x; yint = oslope*xint + oyint; }
+    if(oslope == tslope) { xint = p1.x+(p1.xvel/2); yint = p1.y+(p1.yvel/2); }
     
-    if(frame == 100)
+   /*//useful debugging
+    if(Math.abs(p1.x-p2.x) < 10 && Math.abs(p1.y-p2.y) < 10)
     {
-      console.log("OneX:"+osx+"-"+obx+" OneY:"+osy+"-"+oby);
-      console.log("TwoX:"+tsx+"-"+tbx+" TwoY:"+tsy+"-"+tby);
+      document.getElementById('debug').innerHTML += "("+p1.x+","+p1.y+")<br />"+p1.yvel+"/"+p1.xvel+"<br />"+oslope+"x + "+oyint+"<br /><br />";
+      console.log("OneX:"+osx+" - "+obx+" OneY:"+osy+" - "+oby+" OneS:"+oslope+" OneYInt:"+oyint);
+      console.log("TwoX:"+tsx+" - "+tbx+" TwoY:"+tsy+" - "+tby+" TwoS:"+tslope+" TwoYInt:"+tyint);
       console.log("IntX:"+xint+" IntY:"+yint);
+      console.log("---------");
     }
+  */
+    
     if(xint >= osx && xint <= obx && yint >= osy && yint <= oby &&
        xint >= tsx && xint <= tbx && yint >= tsy && yint <= tby)
     {
-      console.log('collide');
-      //collide
-      p1.x = xint;
-      p1.y = yint;
-      if(p1.xvel == 0) p1.xvel = 0.1;
-      if(p1.yvel == 0) p1.yvel = 0.1;
-      p1.xvel *= -1;
-      p1.yvel *= -1;
+      //console.log('collide- '+xint+','+yint);
+      hit[hiti].play();
+      hiti = (hiti+1)%10;
+      if(p1.x > p2.x) { p1.x = xint+5; p2.x = xint-5; }
+      else            { p1.x = xint-5; p2.x = xint+5; }
+      if(p1.y > p2.y) { p1.y = yint+5; p2.y = yint-5; }
+      else            { p1.y = yint-5; p2.y = yint+5; }
 
-      if(p2.xvel == 0) p2.xvel = -0.1;
-      if(p2.yvel == 0) p2.yvel = 0.1;
-      p2.x = xint;
-      p2.y = yint;
-      p2.xvel *= -1;
-      p2.yvel *= -1;
+      var txvel = p1.xvel;
+      var tyvel = p1.yvel;
+      p1.xvel = p2.xvel;
+      p1.yvel = p2.yvel;
+      p2.xvel = txvel;
+      p2.yvel = tyvel;
+
+      p1.sprint = true;
+      p2.sprint = true;
     }
+
+    p1.tick();
+    p2.tick();
 
     p1.draw(offsetx, offsety);
     p2.draw(offsetx, offsety);

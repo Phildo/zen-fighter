@@ -13,6 +13,7 @@ var Game = function()
   var tick = function()
   {
     requestAnimFrame(tick,stage.dispCanv.canvas);
+    //setTimeout(tick, 100);
     scenes[currentScene].tick();
     stage.draw();
   };
